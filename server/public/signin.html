@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sign In — RoamRoots TravNet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="img/logo-icon.png" type="image/png">
+<script src="api.js"></script>
+</head>
+<body>
+<header>
+  <div class="nav-top">
+    <a href="index.html" class="brand">
+      <div class="brand-mark-badge"><img src="img/logo-icon.png" alt="RoamRoots TravNet" class="brand-mark-img"></div>
+      <div class="brand-text">
+        <div class="name">RoamRoots <span style="color:var(--ocean)">TravNet</span></div>
+        <div class="sub">Ghana · Travel</div>
+      </div>
+    </a>
+    <nav class="main-links">
+      <a href="index.html">Home</a>
+      <a href="destinations.html">Destinations</a>
+      <a href="plan-trip.html">Plan My Trip</a>
+      <a href="accommodation.html">Accommodation</a>
+      <a href="transportation.html">Transportation</a>
+      <a href="experiences.html">Experiences</a>
+      <a href="restaurants.html">Restaurants</a>
+      <a href="map.html">Map</a>
+    </nav>
+    <div class="nav-actions">
+      <div class="lang-select">🇬🇭 GHS · EN ▾</div>
+      <a href="signin.html" class="btn btn-ghost">Sign In</a>
+      <a href="signup.html" class="btn btn-gold">Create Account</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <h1>Welcome back</h1>
+      <p class="sub">Sign in to plan and manage your Ghana trips.</p>
+      <form id="signinForm">
+        <div class="auth-field"><label>Email or phone</label><input type="text" id="signinEmail" placeholder="you@example.com"></div>
+        <div class="auth-field"><label>Password</label><input type="password" id="signinPassword" placeholder="••••••••"></div>
+        <button class="btn btn-ocean auth-btn" type="submit" id="signinBtn">Sign In</button>
+      </form>
+      <p id="signinStatus" style="font-size:13px;margin-top:10px;text-align:center;"></p>
+      <div class="auth-divider">or</div>
+      <button class="btn btn-ghost auth-btn" style="color:var(--navy);border-color:var(--line);">Continue with Google</button>
+      <div class="auth-switch">Don't have an account? <a href="signup.html">Create one</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Already signed in? Skip the form and go straight to the homepage.
+  if (localStorage.getItem('roamroots_user_name')) {
+    window.location.href = 'index.html';
+  }
+
+  document.getElementById('signinForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const status = document.getElementById('signinStatus');
+    const btn = document.getElementById('signinBtn');
+    const email = document.getElementById('signinEmail').value.trim();
+    const password = document.getElementById('signinPassword').value;
+
+    if (!email || !password) {
+      status.textContent = 'Enter your email and password.';
+      status.style.color = 'var(--red)';
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Signing in...';
+    const result = await apiCall('/auth/signin', 'POST', { email, password });
+    btn.disabled = false; btn.textContent = 'Sign In';
+
+    if (result.connected && result.ok) {
+      status.style.color = 'var(--forest)';
+      status.textContent = `Welcome back, ${result.data.user.name}! Redirecting...`;
+      localStorage.setItem('roamroots_user_name', result.data.user.name);
+      localStorage.setItem('roamroots_user_email', result.data.user.email);
+      setTimeout(() => { window.location.href = 'index.html'; }, 900);
+    } else if (result.connected && !result.ok) {
+      status.style.color = 'var(--red)';
+      status.textContent = result.error;
+    } else {
+      const fallbackName = email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      status.style.color = '#8a97a5';
+      status.textContent = 'Signed in! (Demo mode.) Redirecting...';
+      localStorage.setItem('roamroots_user_name', fallbackName);
+      localStorage.setItem('roamroots_user_email', email);
+      setTimeout(() => { window.location.href = 'index.html'; }, 900);
+    }
+  });
+</script>
+<footer>
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <div class="brand">
+        <div class="brand-mark-badge"><img src="img/logo-icon.png" alt="RoamRoots TravNet" class="brand-mark-img"></div>
+        <div class="brand-text"><div class="name">RoamRoots TravNet</div></div>
+      </div>
+      <p>Discover, connect, and experience Ghana — one route at a time.</p>
+    </div>
+    <div>
+      <h5>Explore</h5>
+      <ul>
+        <li><a href="destinations.html">Destinations</a></li>
+        <li><a href="plan-trip.html">Plan My Trip</a></li>
+        <li><a href="accommodation.html">Accommodation</a></li>
+        <li><a href="transportation.html">Transportation</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Experience</h5>
+      <ul>
+        <li><a href="experiences.html">Local Experiences</a></li>
+        <li><a href="restaurants.html">Restaurants</a></li>
+        <li><a href="map.html">Interactive Map</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Company</h5>
+      <ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="dashboard.html">My Dashboard</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Emergency</h5>
+      <ul>
+        <li><a href="emergency.html">Police</a></li>
+        <li><a href="emergency.html">Hospitals</a></li>
+        <li><a href="emergency.html">Embassies</a></li>
+        <li><a href="emergency.html">Emergency Contacts</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 RoamRoots TravNet. All rights reserved.</span>
+    <span>Accra, Ghana</span>
+  </div>
+</footer>
+
+</body>
+</html>

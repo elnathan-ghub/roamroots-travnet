@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accommodation — RoamRoots TravNet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="img/logo-icon.png" type="image/png">
+<script src="api.js"></script>
+</head>
+<body>
+<header>
+  <div class="nav-top">
+    <a href="index.html" class="brand">
+      <div class="brand-mark-badge"><img src="img/logo-icon.png" alt="RoamRoots TravNet" class="brand-mark-img"></div>
+      <div class="brand-text">
+        <div class="name">RoamRoots <span style="color:var(--ocean)">TravNet</span></div>
+        <div class="sub">Ghana · Travel</div>
+      </div>
+    </a>
+    <nav class="main-links">
+      <a href="index.html">Home</a>
+      <a href="destinations.html">Destinations</a>
+      <a href="plan-trip.html">Plan My Trip</a>
+      <a href="accommodation.html" class="active">Accommodation</a>
+      <a href="transportation.html">Transportation</a>
+      <a href="experiences.html">Experiences</a>
+      <a href="restaurants.html">Restaurants</a>
+      <a href="map.html">Map</a>
+    </nav>
+    <div class="nav-actions">
+      <div class="lang-select">🇬🇭 GHS · EN ▾</div>
+      <a href="signin.html" class="btn btn-ghost">Sign In</a>
+      <a href="signup.html" class="btn btn-gold">Create Account</a>
+    </div>
+  </div>
+</header>
+<section class="page-header">
+  <svg class="route-svg" viewBox="0 0 1200 300" preserveAspectRatio="none" style="opacity:0.5">
+    <path class="route-path" d="M -50 250 C 200 180, 350 240, 500 150 S 800 60, 1000 120 S 1250 40, 1350 0" />
+  </svg>
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html">Home</a> / Accommodation</div>
+    <h1>Find your stay in Ghana</h1>
+    <p>Hotels, guesthouses, resorts and hostels — book a place to rest between adventures.</p>
+  </div>
+</section>
+
+<section class="wrap" style="padding-top:56px;">
+  <div class="filter-bar" id="filterBar">
+    <div class="filter-chip active" data-type="all">All Stays</div>
+    <div class="filter-chip" data-type="Hotel">Hotels</div>
+    <div class="filter-chip" data-type="Guesthouse">Guesthouses</div>
+    <div class="filter-chip" data-type="Resort">Resorts</div>
+    <div class="filter-chip" data-type="Hostel">Hostels</div>
+  </div>
+  <div class="book-grid" id="stayGrid"></div>
+</section>
+<div style="height:60px"></div>
+
+<script>
+  const stays = [
+    {name:"Labadi Beach Hotel", type:"Resort", loc:"Accra", rating:4.7, price:"₵850", img:"img/labadi-beach-hotel.jpg"},
+    {name:"Coconut Grove Beach Resort", type:"Resort", loc:"Elmina", rating:4.5, price:"₵620", img:"img/coconut-grove-resort.jpg"},
+    {name:"Golden Bean Hotel", type:"Hotel", loc:"Kumasi", rating:4.4, price:"₵380", img:"img/golden-bean-hotel.jpg"},
+    {name:"Volta View Guesthouse", type:"Guesthouse", loc:"Hohoe", rating:4.3, price:"₵180", img:"img/volta-view-guesthouse.jpg"},
+    {name:"Ridge Roots Hostel", type:"Hostel", loc:"Accra", rating:4.1, price:"₵90", img:"img/ridge-roots-hostel.jpg"},
+    {name:"Mole Motel", type:"Hotel", loc:"Mole National Park", rating:4.2, price:"₵340", img:"img/mole-motel.jpg"},
+    {name:"Kokrobite Guesthouse", type:"Guesthouse", loc:"Kokrobite", rating:4.0, price:"₵160", img:"img/kokrobite-guesthouse.jpg"},
+    {name:"Busua Beach Resort", type:"Resort", loc:"Busua", rating:4.6, price:"₵540", img:"img/busua-beach-resort.jpg"},
+    {name:"Tamale Travellers Hostel", type:"Hostel", loc:"Tamale", rating:3.9, price:"₵75", img:"img/tamale-travellers-hostel.jpg"},
+  ];
+
+  function renderStays(list){
+    document.getElementById('stayGrid').innerHTML = list.map(s => `
+      <div class="book-card">
+        <div class="book-img">
+          <img src="${s.img}" alt="${s.name}">
+          <div class="book-badge">${s.type}</div>
+        </div>
+        <div class="book-body">
+          <h3>${s.name}</h3>
+          <div class="loc">📍 ${s.loc}</div>
+          <div class="stars">★★★★☆ <span style="color:#8a97a5;font-size:11.5px;">${s.rating}</span></div>
+          <div class="book-foot">
+            <div class="book-price">${s.price}<span> / night</span></div>
+            <button class="btn btn-ocean btn-sm" onclick="bookStay('${s.name}', '${s.loc}', '${s.price}')">Book Now</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+  renderStays(stays);
+
+  document.querySelectorAll('#filterBar .filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#filterBar .filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const t = chip.dataset.type;
+      renderStays(t === 'all' ? stays : stays.filter(s => s.type === t));
+    });
+  });
+
+  async function bookStay(name, loc, price){
+    const result = await apiCall('/bookings', 'POST', {
+      category: 'accommodation', itemName: name, guestName: 'Guest',
+      details: { location: loc, price }
+    });
+    if (result.connected && result.ok) {
+      alert(`Booked! ${name} — confirmation #${result.data.booking.id}`);
+    } else if (result.connected && !result.ok) {
+      alert(`Couldn't complete booking: ${result.error}`);
+    } else {
+      alert(`${name} — booking request sent! (Demo mode — start the backend server to save real bookings.)`);
+    }
+  }
+</script>
+<footer>
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <div class="brand">
+        <div class="brand-mark-badge"><img src="img/logo-icon.png" alt="RoamRoots TravNet" class="brand-mark-img"></div>
+        <div class="brand-text"><div class="name">RoamRoots TravNet</div></div>
+      </div>
+      <p>Discover, connect, and experience Ghana — one route at a time.</p>
+    </div>
+    <div>
+      <h5>Explore</h5>
+      <ul>
+        <li><a href="destinations.html">Destinations</a></li>
+        <li><a href="plan-trip.html">Plan My Trip</a></li>
+        <li><a href="accommodation.html">Accommodation</a></li>
+        <li><a href="transportation.html">Transportation</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Experience</h5>
+      <ul>
+        <li><a href="experiences.html">Local Experiences</a></li>
+        <li><a href="restaurants.html">Restaurants</a></li>
+        <li><a href="map.html">Interactive Map</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Company</h5>
+      <ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="dashboard.html">My Dashboard</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Emergency</h5>
+      <ul>
+        <li><a href="emergency.html">Police</a></li>
+        <li><a href="emergency.html">Hospitals</a></li>
+        <li><a href="emergency.html">Embassies</a></li>
+        <li><a href="emergency.html">Emergency Contacts</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 RoamRoots TravNet. All rights reserved.</span>
+    <span>Accra, Ghana</span>
+  </div>
+</footer>
+
+</body>
+</html>

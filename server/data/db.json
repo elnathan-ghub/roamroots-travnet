@@ -1,0 +1,34 @@
+{
+  "users": [],
+  "bookings": [],
+  "reviews": [
+    {
+      "id": "rev_seed_1",
+      "name": "Ama K.",
+      "initials": "AK",
+      "place": "Kakum National Park",
+      "rating": 5,
+      "text": "The canopy walk was unreal — go early morning before the heat and crowds. Guides are friendly and full of local knowledge.",
+      "createdAt": "2026-06-10T09:00:00.000Z"
+    },
+    {
+      "id": "rev_seed_2",
+      "name": "David O.",
+      "initials": "DO",
+      "place": "Wli Waterfalls",
+      "rating": 4,
+      "text": "Beautiful hike, but wear proper shoes — the trail gets slippery near the falls. Bring a change of clothes, you will get wet!",
+      "createdAt": "2026-06-15T09:00:00.000Z"
+    },
+    {
+      "id": "rev_seed_3",
+      "name": "Efua T.",
+      "initials": "ET",
+      "place": "Cape Coast Castle",
+      "rating": 5,
+      "text": "A heavy but important visit. The guided tour was respectful and informative — set aside at least two hours.",
+      "createdAt": "2026-06-20T09:00:00.000Z"
+    }
+  ],
+  "contactMessages": []
+}

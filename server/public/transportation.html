@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transportation — RoamRoots TravNet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="img/logo-icon.png" type="image/png">
+<script src="data.js"></script>
+<script src="api.js"></script>
+</head>
+<body>
+<header>
+  <div class="nav-top">
+    <a href="index.html" class="brand">
+      <div class="brand-mark-badge"><img src="img/logo-icon.png" alt="RoamRoots TravNet" class="brand-mark-img"></div>
+      <div class="brand-text">
+        <div class="name">RoamRoots <span style="color:var(--ocean)">TravNet</span></div>
+        <div class="sub">Ghana · Travel</div>
+      </div>
+    </a>
+    <nav class="main-links">
+      <a href="index.html">Home</a>
+      <a href="destinations.html">Destinations</a>
+      <a href="plan-trip.html">Plan My Trip</a>
+      <a href="accommodation.html">Accommodation</a>
+      <a href="transportation.html" class="active">Transportation</a>
+      <a href="experiences.html">Experiences</a>
+      <a href="restaurants.html">Restaurants</a>
+      <a href="map.html">Map</a>
+    </nav>
+    <div class="nav-actions">
+      <div class="lang-select">🇬🇭 GHS · EN ▾</div>
+      <a href="signin.html" class="btn btn-ghost">Sign In</a>
+      <a href="signup.html" class="btn btn-gold">Create Account</a>
+    </div>
+  </div>
+</header>
+<section class="page-header">
+  <svg class="route-svg" viewBox="0 0 1200 300" preserveAspectRatio="none" style="opacity:0.5">
+    <path class="route-path" d="M -50 250 C 200 180, 350 240, 500 150 S 800 60, 1000 120 S 1250 40, 1350 0" />
+  </svg>
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html">Home</a> / Transportation</div>
+    <h1>Get around Ghana easily</h1>
+    <p>Book airport pickups, intercity buses, taxis, car rentals, and tour buses — all in one place.</p>
+  </div>
+</section>
+
+<section class="wrap" style="padding-top:56px;">
+  <div class="section-head">
+    <div><span class="kicker">Book a ride</span><h2>Choose how you'll travel</h2></div>
+  </div>
+  <div class="service-grid">
+    <div class="service-tile" onclick="openBooking('Airport Pickup')"><div class="ic">✈️</div><h4>Airport Pickup</h4><p>Meet & greet on arrival</p></div>
+    <div class="service-tile" onclick="openBooking('Bus')"><div class="ic">🚌</div><h4>Bus</h4><p>Intercity STC & VIP routes</p></div>
+    <div class="service-tile" onclick="openBooking('Taxi')"><div class="ic">🚕</div><h4>Taxi</h4><p>City rides, metered or fixed</p></div>
+    <div class="service-tile" onclick="openBooking('Car Rental')"><div class="ic">🚗</div><h4>Car Rental</h4><p>Self-drive or with a driver</p></div>
+    <div class="service-tile" onclick="openBooking('Tour Bus')"><div class="ic">🚐</div><h4>Tour Bus</h4><p>Group & multi-day tours</p></div>
+  </div>
+</section>
+
+<section class="wrap" style="padding-top:10px;">
+  <div class="plan-form" style="margin-top:0;">
+    <div class="plan-form-inner">
+      <div class="form-block">
+        <div class="label-row"><span class="step-num">→</span><h3 id="bookingTitle">Book: Airport Pickup</h3></div>
+        <div class="date-row">
+          <div class="field autocomplete-wrap">
+            <label>Pickup location</label>
+            <input type="text" id="pickupInput" placeholder="Search pickup location..." autocomplete="off">
+            <div class="autocomplete-list" id="pickupList"></div>
+          </div>
+          <div class="field autocomplete-wrap">
+            <label>Drop-off location</label>
+            <input type="text" id="dropoffInput" placeholder="Search drop-off location..." autocomplete="off">
+            <div class="autocomplete-list" id="dropoffList"></div>
+          </div>
+        </div>
+        <div class="date-row" style="margin-top:14px;">
+          <div class="date-box">
+            <label>Date</label>
+            <div class="dt-row"><input type="date" id="rideDate"></div>
+          </div>
+          <div class="date-box checkout">
+            <label>Time</label>
+            <div class="dt-row"><input type="time" id="rideTime" value="09:00"></div>
+          </div>
+        </div>
+      </div>
+      <div class="form-footer">
+        <button type="button" class="btn btn-ocean" style="padding:14px 34px;font-size:14.5px;" onclick="confirmRideBooking()">Confirm Booking</button>
+      </div>
+    </div>
+  </div>
+</section>
+<div style="height:60px"></div>
+
+<script>
+  let activeMode = 'Airport Pickup';
+
+  function setupAutocomplete(inputId, listId){
+    const input = document.getElementById(inputId);
+    const list = document.getElementById(listId);
+    let highlightIndex = -1;
+
+    function render(query){
+      const data = TRANSPORT_MODE_LOCATIONS[activeMode] || SITE_TRANSPORT_LOCATIONS;
+      const matches = query.trim() === ''
+        ? data.slice(0, 6)
+        : data.filter(item => item.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 8);
+
+      highlightIndex = -1;
+      list.innerHTML = matches.length === 0
+        ? `<div class="autocomplete-empty">No matches — try a different search</div>`
+        : matches.map(m => `<div class="autocomplete-item"><span class="pin">📍</span>${m}</div>`).join('');
+      list.classList.add('show');
+    }
+
+    input.addEventListener('focus', () => render(input.value));
+    input.addEventListener('input', () => render(input.value));
+    input.addEventListener('keydown', (e) => {
+      const items = [...list.querySelectorAll('.autocomplete-item')];
+      if(e.key === 'ArrowDown'){ e.preventDefault(); highlightIndex = Math.min(highlightIndex+1, items.length-1); }
+      if(e.key === 'ArrowUp'){ e.preventDefault(); highlightIndex = Math.max(highlightIndex-1, 0); }
+      if(e.key === 'Enter' && highlightIndex >= 0){ e.preventDefault(); items[highlightIndex].click(); }
+      items.forEach((it,i) => it.classList.toggle('highlight', i === highlightIndex));
+    });
+    list.addEventListener('click', (e) => {
+      const item = e.target.closest('.autocomplete-item');
+      if(!item) return;
+      input.value = item.textContent.replace('📍','').trim();
+      list.classList.remove('show');
+    });
+    document.addEventListener('click', (e) => {
+      if(!e.target.closest(`#${inputId}`) && !e.target.closest(`#${listId}`)) list.classList.remove('show');
+    });
+
+    return render;
+  }
+
+  const renderPickup = setupAutocomplete('pickupInput', 'pickupList');
+  const renderDropoff = setupAutocomplete('dropoffInput', 'dropoffList');
+
+  function openBooking(name){
+    activeMode = name;
+    document.getElementById('bookingTitle').textContent = 'Book: ' + name;
+    document.getElementById('pickupInput').value = '';
+    document.getElementById('dropoffInput').value = '';
+    const placeholders = {
+      "Airport Pickup": ["Search pickup point (e.g. Kotoka Airport)...", "Search drop-off address..."],
+      "Bus": ["Departure city...", "Arrival city..."],
+      "Taxi": ["Pickup location...", "Drop-off location..."],
+      "Car Rental": ["Pickup branch...", "Return branch..."],
+      "Tour Bus": ["Departure point...", "Tour destination..."],
+    };
+    const [pPlaceholder, dPlaceholder] = placeholders[name] || ["Pickup location...", "Drop-off location..."];
+    document.getElementById('pickupInput').placeholder = pPlaceholder;
+    document.getElementById('dropoffInput').placeholder = dPlaceholder;
+    window.scrollTo({top: document.querySelector('.plan-form').offsetTop - 100, behavior:'smooth'});
+  }
+
+  async function confirmRideBooking(){
+    const pickup = document.getElementById('pickupInput').value.trim();
+    const dropoff = document.getElementById('dropoffInput').value.trim();
+    const date = document.getElementById('rideDate').value;
+    const time = document.getElementById('rideTime').value;
+
+    if(!pickup || !dropoff){
+      alert('Please choose both a pickup and drop-off location.');
+      return;
+    }
+
+    const result = await apiCall('/bookings', 'POST', {
+      category: 'transport', itemName: activeMode, guestName: 'Guest',
+      date, details: { pickup, dropoff, time }
+    });
+
+    if (result.connected && result.ok) {
+      alert(`Ride booked! ${activeMode} — confirmation #${result.data.booking.id}`);
+    } else if (result.connected && !result.ok) {
+      alert(`Couldn't complete booking: ${result.error}`);
+    } else {
+      alert('Ride request sent! (Demo mode — start the backend server to save real bookings.)');
+    }
+  }
+</script>
+<footer>
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <div class="brand">
+        <div class="brand-mark-badge"><img src="img/logo-icon.png" alt="RoamRoots TravNet" class="brand-mark-img"></div>
+        <div class="brand-text"><div class="name">RoamRoots TravNet</div></div>
+      </div>
+      <p>Discover, connect, and experience Ghana — one route at a time.</p>
+    </div>
+    <div>
+      <h5>Explore</h5>
+      <ul>
+        <li><a href="destinations.html">Destinations</a></li>
+        <li><a href="plan-trip.html">Plan My Trip</a></li>
+        <li><a href="accommodation.html">Accommodation</a></li>
+        <li><a href="transportation.html">Transportation</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Experience</h5>
+      <ul>
+        <li><a href="experiences.html">Local Experiences</a></li>
+        <li><a href="restaurants.html">Restaurants</a></li>
+        <li><a href="map.html">Interactive Map</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Company</h5>
+      <ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="dashboard.html">My Dashboard</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Emergency</h5>
+      <ul>
+        <li><a href="emergency.html">Police</a></li>
+        <li><a href="emergency.html">Hospitals</a></li>
+        <li><a href="emergency.html">Embassies</a></li>
+        <li><a href="emergency.html">Emergency Contacts</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 RoamRoots TravNet. All rights reserved.</span>
+    <span>Accra, Ghana</span>
+  </div>
+</footer>
+
+</body>
+</html>

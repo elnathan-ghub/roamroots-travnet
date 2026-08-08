@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Map — RoamRoots TravNet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="img/logo-icon.png" type="image/png">
+<script src="api.js"></script>
+</head>
+<body>
+<header>
+  <div class="nav-top">
+    <a href="index.html" class="brand">
+      <div class="brand-mark-badge"><img src="img/logo-icon.png" alt="RoamRoots TravNet" class="brand-mark-img"></div>
+      <div class="brand-text">
+        <div class="name">RoamRoots <span style="color:var(--ocean)">TravNet</span></div>
+        <div class="sub">Ghana · Travel</div>
+      </div>
+    </a>
+    <nav class="main-links">
+      <a href="index.html">Home</a>
+      <a href="destinations.html">Destinations</a>
+      <a href="plan-trip.html">Plan My Trip</a>
+      <a href="accommodation.html">Accommodation</a>
+      <a href="transportation.html">Transportation</a>
+      <a href="experiences.html">Experiences</a>
+      <a href="restaurants.html">Restaurants</a>
+      <a href="map.html" class="active">Map</a>
+    </nav>
+    <div class="nav-actions">
+      <div class="lang-select">🇬🇭 GHS · EN ▾</div>
+      <a href="signin.html" class="btn btn-ghost">Sign In</a>
+      <a href="signup.html" class="btn btn-gold">Create Account</a>
+    </div>
+  </div>
+</header>
+<section class="page-header">
+  <svg class="route-svg" viewBox="0 0 1200 300" preserveAspectRatio="none" style="opacity:0.5">
+    <path class="route-path" d="M -50 250 C 200 180, 350 240, 500 150 S 800 60, 1000 120 S 1250 40, 1350 0" />
+  </svg>
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html">Home</a> / Interactive Map</div>
+    <h1>Find what's nearby</h1>
+    <p>A Google Maps-style view of Ghana with pins for hotels, restaurants, hospitals, ATMs, police stations, tourist sites, and fuel stations.</p>
+  </div>
+</section>
+
+<section class="wrap" style="padding-top:56px;">
+  <div class="plan-form" style="margin-top:0;margin-bottom:26px;">
+    <div class="plan-form-inner" style="padding:24px 28px;">
+      <div class="label-row" style="margin-bottom:16px;"><span class="step-num">→</span><h3>Get directions</h3></div>
+      <div class="date-row" style="align-items:end;gap:14px;">
+        <div class="field autocomplete-wrap">
+          <label>From</label>
+          <input type="text" id="fromInput" placeholder="Your current location..." autocomplete="off">
+          <div class="autocomplete-list" id="fromList"></div>
+          <button type="button" id="useLocationBtn" style="background:none;border:none;color:var(--ocean);font-size:12px;font-weight:600;padding:6px 0 0;cursor:pointer;">📍 Use my current location</button>
+        </div>
+        <div class="field autocomplete-wrap">
+          <label>To</label>
+          <input type="text" id="toInput" placeholder="Search a pin — hotel, restaurant, site..." autocomplete="off">
+          <div class="autocomplete-list" id="toList"></div>
+        </div>
+      </div>
+      <div class="form-footer" style="margin-top:16px;">
+        <button type="button" class="btn btn-ghost" id="clearRouteBtn" style="color:var(--navy);border-color:var(--line);margin-right:10px;">Clear</button>
+        <button type="button" class="btn btn-ocean" id="getDirectionsBtn" style="padding:12px 28px;">Get Directions</button>
+      </div>
+      <p id="directionsStatus" style="font-size:12.5px;color:#8a97a5;margin-top:10px;"></p>
+    </div>
+  </div>
+
+  <div class="map-layout">
+    <aside class="map-legend">
+      <h4>Show on map</h4>
+      <div class="legend-item" data-cat="hotel"><span class="legend-dot" style="background:#1B8FD6;"></span> Hotels</div>
+      <div class="legend-item" data-cat="restaurant"><span class="legend-dot" style="background:#E8A33D;"></span> Restaurants</div>
+      <div class="legend-item" data-cat="hospital"><span class="legend-dot" style="background:#D6473F;"></span> Hospitals</div>
+      <div class="legend-item" data-cat="atm"><span class="legend-dot" style="background:#1D7A4C;"></span> ATMs</div>
+      <div class="legend-item" data-cat="police"><span class="legend-dot" style="background:#0F2438;"></span> Police Stations</div>
+      <div class="legend-item" data-cat="tourist"><span class="legend-dot" style="background:#9b59b6;"></span> Tourist Sites</div>
+      <div class="legend-item" data-cat="fuel"><span class="legend-dot" style="background:#7f8c8d;"></span> Fuel Stations</div>
+    </aside>
+    <div id="mapCanvas"></div>
+  </div>
+</section>
+<div style="height:60px"></div>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+<style>
+  /* Restyle the default routing instructions panel to match RoamRoots design */
+  .leaflet-routing-container{
+    background:#fff !important;
+    border-radius:14px !important;
+    box-shadow:0 12px 30px -18px rgba(15,36,56,0.45) !important;
+    border:1px solid rgba(15,36,56,0.08) !important;
+    font-family:'Inter',sans-serif !important;
+    padding:14px !important;
+    max-width:290px !important;
+  }
+  .leaflet-routing-alt{
+    font-size:12.5px !important;
+    max-height:220px !important;
+  }
+  .leaflet-routing-alt h2, .leaflet-routing-alt h3{
+    font-family:'Sora',sans-serif !important;
+    color:#0F2438 !important;
+    font-size:14px !important;
+  }
+  .leaflet-routing-alt table tr:hover{ background:rgba(27,143,214,0.08) !important; }
+  .leaflet-routing-geocoders{ display:none !important; }
+</style>
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+<script>
+  const map = L.map('mapCanvas').setView([5.6037, -0.1870], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  const colors = {hotel:"#1B8FD6", restaurant:"#E8A33D", hospital:"#D6473F", atm:"#1D7A4C", police:"#0F2438", tourist:"#9b59b6", fuel:"#7f8c8d"};
+
+  const points = [
+    {cat:"hotel", name:"Labadi Beach Hotel", lat:5.5556, lng:-0.1435},
+    {cat:"hotel", name:"Golden Tulip Accra", lat:5.6108, lng:-0.1821},
+    {cat:"restaurant", name:"Buka Restaurant", lat:5.5583, lng:-0.1802},
+    {cat:"restaurant", name:"Santoku", lat:5.5941, lng:-0.1735},
+    {cat:"hospital", name:"Korle Bu Teaching Hospital", lat:5.5364, lng:-0.2265},
+    {cat:"hospital", name:"37 Military Hospital", lat:5.5852, lng:-0.1745},
+    {cat:"atm", name:"GCB Bank ATM - Osu", lat:5.5570, lng:-0.1810},
+    {cat:"atm", name:"Ecobank ATM - Accra Mall", lat:5.6222, lng:-0.1735},
+    {cat:"police", name:"Osu Police Station", lat:5.5560, lng:-0.1795},
+    {cat:"police", name:"Accra Central Police", lat:5.5490, lng:-0.2050},
+    {cat:"tourist", name:"Kwame Nkrumah Mausoleum", lat:5.5450, lng:-0.2065},
+    {cat:"tourist", name:"Independence Square", lat:5.5450, lng:-0.1935},
+    {cat:"fuel", name:"Shell - Airport Bypass", lat:5.6052, lng:-0.1710},
+    {cat:"fuel", name:"GOIL - Spintex Road", lat:5.6320, lng:-0.1245},
+  ];
+
+  const markers = {};
+  points.forEach(p => {
+    const marker = L.circleMarker([p.lat, p.lng], {
+      radius: 8, fillColor: colors[p.cat], color:"#fff", weight:2, fillOpacity:0.9
+    }).bindPopup(`<div style="min-width:150px;"><strong>${p.name}</strong><br><span style="text-transform:capitalize;color:#8a97a5;font-size:12px;">${p.cat}</span><br><button onclick="directToPoint('${p.name.replace(/'/g,"\\'")}')" style="margin-top:8px;background:#1B8FD6;color:#fff;border:none;padding:6px 12px;border-radius:16px;font-size:12px;font-weight:600;cursor:pointer;">Directions here</button></div>`);
+    marker.addTo(map);
+    markers[p.name] = {marker, cat:p.cat};
+  });
+
+  document.querySelectorAll('.legend-item').forEach(item => {
+    item.classList.add('active-legend');
+    item.addEventListener('click', () => {
+      const cat = item.dataset.cat;
+      const isActive = item.classList.toggle('active-legend');
+      Object.values(markers).forEach(m => {
+        if(m.cat === cat){
+          if(isActive){ m.marker.addTo(map); } else { map.removeLayer(m.marker); }
+        }
+      });
+      item.style.opacity = isActive ? '1' : '0.4';
+    });
+  });
+
+  /* ---------- DIRECTIONS PANEL ---------- */
+  let routingControl = null;
+  let fromCoords = null;   // {lat, lng} or null
+  let toCoords = null;
+
+  const pointNames = points.map(p => p.name);
+
+  function setupDirAutocomplete(inputId, listId, onPick){
+    const input = document.getElementById(inputId);
+    const list = document.getElementById(listId);
+    let highlightIndex = -1;
+
+    function render(query){
+      const matches = query.trim() === ''
+        ? pointNames.slice(0, 6)
+        : pointNames.filter(n => n.toLowerCase().includes(query.trim().toLowerCase())).slice(0, 8);
+      highlightIndex = -1;
+      list.innerHTML = matches.length === 0
+        ? `<div class="autocomplete-empty">No matches — try a different search</div>`
+        : matches.map(m => `<div class="autocomplete-item"><span class="pin">📍</span>${m}</div>`).join('');
+      list.classList.add('show');
+    }
+
+    input.addEventListener('focus', () => render(input.value));
+    input.addEventListener('input', () => { onPick(null); render(input.value); });
+    input.addEventListener('keydown', (e) => {
+      const items = [...list.querySelectorAll('.autocomplete-item')];
+      if(e.key === 'ArrowDown'){ e.preventDefault(); highlightIndex = Math.min(highlightIndex+1, items.length-1); }
+      if(e.key === 'ArrowUp'){ e.preventDefault(); highlightIndex = Math.max(highlightIndex-1, 0); }
+      if(e.key === 'Enter' && highlightIndex >= 0){ e.preventDefault(); items[highlightIndex].click(); }
+      items.forEach((it,i) => it.classList.toggle('highlight', i === highlightIndex));
+    });
+    list.addEventListener('click', (e) => {
+      const item = e.target.closest('.autocomplete-item');
+      if(!item) return;
+      const name = item.textContent.replace('📍','').trim();
+      input.value = name;
+      const p = points.find(pt => pt.name === name);
+      onPick(p ? {lat:p.lat, lng:p.lng} : null);
+      list.classList.remove('show');
+    });
+    document.addEventListener('click', (e) => {
+      if(!e.target.closest(`#${inputId}`) && !e.target.closest(`#${listId}`)) list.classList.remove('show');
+    });
+  }
+
+  setupDirAutocomplete('fromInput', 'fromList', (coords) => { fromCoords = coords; });
+  setupDirAutocomplete('toInput', 'toList', (coords) => { toCoords = coords; });
+
+  document.getElementById('useLocationBtn').addEventListener('click', () => {
+    const status = document.getElementById('directionsStatus');
+    if(!navigator.geolocation){
+      status.textContent = "Geolocation isn't supported in this browser.";
+      return;
+    }
+    status.textContent = "Locating you...";
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        fromCoords = {lat: pos.coords.latitude, lng: pos.coords.longitude};
+        document.getElementById('fromInput').value = "My Current Location";
+        status.textContent = "Location found.";
+      },
+      () => { status.textContent = "Couldn't get your location — search for a starting point instead."; }
+    );
+  });
+
+  function directToPoint(name){
+    const p = points.find(pt => pt.name === name);
+    if(!p) return;
+    document.getElementById('toInput').value = name;
+    toCoords = {lat:p.lat, lng:p.lng};
+    window.scrollTo({top: document.querySelector('.plan-form').offsetTop - 100, behavior:'smooth'});
+    document.getElementById('directionsStatus').textContent = `Destination set to ${name}. Choose a starting point, then tap Get Directions.`;
+  }
+
+  document.getElementById('getDirectionsBtn').addEventListener('click', () => {
+    const status = document.getElementById('directionsStatus');
+    if(!fromCoords){ status.textContent = "Pick a starting point (or use your current location)."; return; }
+    if(!toCoords){ status.textContent = "Pick a destination from the list."; return; }
+
+    if(routingControl){ map.removeControl(routingControl); routingControl = null; }
+
+    routingControl = L.Routing.control({
+      waypoints: [L.latLng(fromCoords.lat, fromCoords.lng), L.latLng(toCoords.lat, toCoords.lng)],
+      routeWhileDragging: false,
+      addWaypoints: false,
+      draggableWaypoints: false,
+      lineOptions: {
+        styles: [
+          { color: '#0d2b45', weight: 10, opacity: 0.55 },   // dark halo/outline, like Google's road shadow
+          { color: '#1B8FD6', weight: 6, opacity: 1 },        // main road-colored line
+          { color: '#5fb4ea', weight: 2, opacity: 0.9 }       // bright centerline highlight
+        ]
+      },
+      createMarker: function(i, wp) {
+        if (i === 0) {
+          // Start marker — Uber-style green "you are here" dot
+          return L.marker(wp.latLng, {
+            icon: L.divIcon({
+              className: '',
+              html: `<div style="width:20px;height:20px;border-radius:50%;background:#1D7A4C;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>`,
+              iconSize: [20, 20],
+              iconAnchor: [10, 10]
+            })
+          }).bindPopup("Start");
+        } else {
+          // Destination marker — classic map pin
+          return L.marker(wp.latLng, {
+            icon: L.divIcon({
+              className: '',
+              html: `<div style="width:30px;height:30px;position:relative;">
+                       <svg viewBox="0 0 24 24" width="30" height="30" style="filter:drop-shadow(0 2px 4px rgba(0,0,0,0.35));">
+                         <path d="M12 0C7 0 3 4 3 9c0 6.5 9 15 9 15s9-8.5 9-15c0-5-4-9-9-9z" fill="#D6473F"/>
+                         <circle cx="12" cy="9" r="3.4" fill="#fff"/>
+                       </svg>
+                     </div>`,
+              iconSize: [30, 30],
+              iconAnchor: [15, 30]
+            })
+          }).bindPopup("Destination");
+        }
+      },
+      show: true,
+      collapsible: true
+    }).addTo(map);
+
+    status.textContent = "Route drawn on the map.";
+  });
+
+  document.getElementById('clearRouteBtn').addEventListener('click', () => {
+    if(routingControl){ map.removeControl(routingControl); routingControl = null; }
+    fromCoords = null; toCoords = null;
+    document.getElementById('fromInput').value = '';
+    document.getElementById('toInput').value = '';
+    document.getElementById('directionsStatus').textContent = '';
+  });
+</script>
+<footer>
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <div class="brand">
+        <div class="brand-mark-badge"><img src="img/logo-icon.png" alt="RoamRoots TravNet" class="brand-mark-img"></div>
+        <div class="brand-text"><div class="name">RoamRoots TravNet</div></div>
+      </div>
+      <p>Discover, connect, and experience Ghana — one route at a time.</p>
+    </div>
+    <div>
+      <h5>Explore</h5>
+      <ul>
+        <li><a href="destinations.html">Destinations</a></li>
+        <li><a href="plan-trip.html">Plan My Trip</a></li>
+        <li><a href="accommodation.html">Accommodation</a></li>
+        <li><a href="transportation.html">Transportation</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Experience</h5>
+      <ul>
+        <li><a href="experiences.html">Local Experiences</a></li>
+        <li><a href="restaurants.html">Restaurants</a></li>
+        <li><a href="map.html">Interactive Map</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Company</h5>
+      <ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="dashboard.html">My Dashboard</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Emergency</h5>
+      <ul>
+        <li><a href="emergency.html">Police</a></li>
+        <li><a href="emergency.html">Hospitals</a></li>
+        <li><a href="emergency.html">Embassies</a></li>
+        <li><a href="emergency.html">Emergency Contacts</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 RoamRoots TravNet. All rights reserved.</span>
+    <span>Accra, Ghana</span>
+  </div>
+</footer>
+
+</body>
+</html>
