@@ -31,6 +31,7 @@
       <a href="restaurants.html">Restaurants</a>
       <a href="map.html">Map</a>
     </nav>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu">☰</button>
     <div class="nav-actions">
       <div class="lang-select">🇬🇭 GHS · EN ▾</div>
       <a href="signin.html" class="btn btn-ghost">Sign In</a>
@@ -63,15 +64,15 @@
 
 <script>
   const stays = [
-    {name:"Labadi Beach Hotel", type:"Resort", loc:"Accra", rating:4.7, price:"₵850", img:"img/labadi-beach-hotel.jpg"},
-    {name:"Coconut Grove Beach Resort", type:"Resort", loc:"Elmina", rating:4.5, price:"₵620", img:"img/coconut-grove-resort.jpg"},
-    {name:"Golden Bean Hotel", type:"Hotel", loc:"Kumasi", rating:4.4, price:"₵380", img:"img/golden-bean-hotel.jpg"},
-    {name:"Volta View Guesthouse", type:"Guesthouse", loc:"Hohoe", rating:4.3, price:"₵180", img:"img/volta-view-guesthouse.jpg"},
-    {name:"Ridge Roots Hostel", type:"Hostel", loc:"Accra", rating:4.1, price:"₵90", img:"img/ridge-roots-hostel.jpg"},
-    {name:"Mole Motel", type:"Hotel", loc:"Mole National Park", rating:4.2, price:"₵340", img:"img/mole-motel.jpg"},
-    {name:"Kokrobite Guesthouse", type:"Guesthouse", loc:"Kokrobite", rating:4.0, price:"₵160", img:"img/kokrobite-guesthouse.jpg"},
-    {name:"Busua Beach Resort", type:"Resort", loc:"Busua", rating:4.6, price:"₵540", img:"img/busua-beach-resort.jpg"},
-    {name:"Tamale Travellers Hostel", type:"Hostel", loc:"Tamale", rating:3.9, price:"₵75", img:"img/tamale-travellers-hostel.jpg"},
+    {name:"Labadi Beach Hotel", type:"Resort", loc:"Accra", rating:4.7, price:"₵850", img:"img/labadi-beach-hotel.jpg", phone:"+233 30 277 2501"},
+    {name:"Coconut Grove Beach Resort", type:"Resort", loc:"Elmina", rating:4.5, price:"₵620", img:"img/coconut-grove-resort.jpg", phone:"+233 24 433 3001"},
+    {name:"Golden Bean Hotel", type:"Hotel", loc:"Kumasi", rating:4.4, price:"₵380", img:"img/golden-bean-hotel.jpg", phone:"+233 32 208 6000"},
+    {name:"Volta View Guesthouse", type:"Guesthouse", loc:"Hohoe", rating:4.3, price:"₵180", img:"img/volta-view-guesthouse.jpg", phone:"+233 20 123 4567"},
+    {name:"Ridge Roots Hostel", type:"Hostel", loc:"Accra", rating:4.1, price:"₵90", img:"img/ridge-roots-hostel.jpg", phone:"+233 24 567 8901"},
+    {name:"Mole Motel", type:"Hotel", loc:"Mole National Park", rating:4.2, price:"₵340", img:"img/mole-motel.jpg", phone:"+233 24 435 8371"},
+    {name:"Kokrobite Guesthouse", type:"Guesthouse", loc:"Kokrobite", rating:4.0, price:"₵160", img:"img/kokrobite-guesthouse.jpg", phone:"+233 24 345 6789"},
+    {name:"Busua Beach Resort", type:"Resort", loc:"Busua", rating:4.6, price:"₵540", img:"img/busua-beach-resort.jpg", phone:"+233 31 209 3308"},
+    {name:"Tamale Travellers Hostel", type:"Hostel", loc:"Tamale", rating:3.9, price:"₵75", img:"img/tamale-travellers-hostel.jpg", phone:"+233 24 234 5678"},
   ];
 
   function renderStays(list){
@@ -85,6 +86,7 @@
           <h3>${s.name}</h3>
           <div class="loc">📍 ${s.loc}</div>
           <div class="stars">★★★★☆ <span style="color:#8a97a5;font-size:11.5px;">${s.rating}</span></div>
+          <div class="loc">📞 <a href="tel:${s.phone.replace(/\s/g,'')}" style="color:#5c6a78;text-decoration:none;">${s.phone}</a></div>
           <div class="book-foot">
             <div class="book-price">${s.price}<span> / night</span></div>
             <button class="btn btn-ocean btn-sm" onclick="bookStay('${s.name}', '${s.loc}', '${s.price}')">Book Now</button>

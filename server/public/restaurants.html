@@ -31,6 +31,7 @@
       <a href="restaurants.html" class="active">Restaurants</a>
       <a href="map.html">Map</a>
     </nav>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu">☰</button>
     <div class="nav-actions">
       <div class="lang-select">🇬🇭 GHS · EN ▾</div>
       <a href="signin.html" class="btn btn-ghost">Sign In</a>
@@ -80,11 +81,11 @@
 
 <script>
   const restaurants = [
-    {name:"Buka Restaurant", loc:"Osu, Accra", price:"₵₵", rating:4.6, dishes:["Waakye","Jollof","Banku"], img:"img/buka-restaurant.jpg"},
-    {name:"Chez Clarisse", loc:"East Legon, Accra", price:"₵₵₵", rating:4.7, dishes:["Grilled Tilapia","Fufu","Light Soup"], img:"img/chez-clarisse.jpg"},
-    {name:"Republic Bar & Grill", loc:"Kumasi", price:"₵₵", rating:4.4, dishes:["Kelewele","Red Red","Suya"], img:"img/republic-bar-grill.jpg"},
-    {name:"Coco Lounge", loc:"Cape Coast", price:"₵", rating:4.2, dishes:["Kenkey & Fish","Palm Nut Soup"], img:"img/coco-lounge.jpg"},
-    {name:"Santoku", loc:"Airport Residential, Accra", price:"₵₵₵", rating:4.8, dishes:["Sushi","Ramen","Pan-Asian"], img:"img/santoku.jpg"},
+    {name:"Buka Restaurant", loc:"Osu, Accra", price:"₵₵", rating:4.6, dishes:["Waakye","Jollof","Banku"], img:"img/buka-restaurant.jpg", phone:"+233 24 456 7890"},
+    {name:"Chez Clarisse", loc:"East Legon, Accra", price:"₵₵₵", rating:4.7, dishes:["Grilled Tilapia","Fufu","Light Soup"], img:"img/chez-clarisse.jpg", phone:"+233 24 345 1298"},
+    {name:"Republic Bar & Grill", loc:"Kumasi", price:"₵₵", rating:4.4, dishes:["Kelewele","Red Red","Suya"], img:"img/republic-bar-grill.jpg", phone:"+233 20 456 7812"},
+    {name:"Coco Lounge", loc:"Cape Coast", price:"₵", rating:4.2, dishes:["Kenkey & Fish","Palm Nut Soup"], img:"img/coco-lounge.jpg", phone:"+233 24 678 9123"},
+    {name:"Santoku", loc:"Airport Residential, Accra", price:"₵₵₵", rating:4.8, dishes:["Sushi","Ramen","Pan-Asian"], img:"img/santoku.jpg", phone:"+233 54 431 1511"},
   ];
 
   document.getElementById('restList').innerHTML = restaurants.map(r => `
@@ -96,6 +97,7 @@
           <span>📍 ${r.loc}</span>
           <span>★ ${r.rating}</span>
           <span class="mono">${r.price}</span>
+          <span>📞 <a href="tel:${r.phone.replace(/\s/g,'')}" style="color:#8a97a5;text-decoration:none;">${r.phone}</a></span>
         </div>
         <div class="dish-tags">${r.dishes.map(d => `<span>${d}</span>`).join('')}</div>
       </div>
