@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Dashboard — RoamRoots TravNet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="img/logo-icon.png" type="image/png">
+<script src="api.js"></script>
+</head>
+<body>
+<header>
+  <div class="nav-top">
+    <a href="index.html" class="brand">
+      <div class="brand-mark-badge"><img src="img/logo-icon.png" alt="RoamRoots TravNet" class="brand-mark-img"></div>
+      <div class="brand-text">
+        <div class="name">RoamRoots <span style="color:var(--ocean)">TravNet</span></div>
+        <div class="sub">Ghana · Travel</div>
+      </div>
+    </a>
+    <nav class="main-links">
+      <a href="index.html">Home</a>
+      <a href="destinations.html">Destinations</a>
+      <a href="plan-trip.html">Plan My Trip</a>
+      <a href="accommodation.html">Accommodation</a>
+      <a href="transportation.html">Transportation</a>
+      <a href="experiences.html">Experiences</a>
+      <a href="restaurants.html">Restaurants</a>
+      <a href="map.html">Map</a>
+    </nav>
+    <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu">☰</button>
+    <div class="nav-actions">
+      <div class="lang-select">🇬🇭 GHS · EN ▾</div>
+      <a href="signin.html" class="btn btn-ghost">Sign In</a>
+      <a href="signup.html" class="btn btn-gold">Create Account</a>
+    </div>
+  </div>
+</header>
+<section class="page-header">
+  <svg class="route-svg" viewBox="0 0 1200 300" preserveAspectRatio="none" style="opacity:0.5">
+    <path class="route-path" d="M -50 250 C 200 180, 350 240, 500 150 S 800 60, 1000 120 S 1250 40, 1350 0" />
+  </svg>
+  <div class="wrap">
+    <div class="crumbs"><a href="index.html">Home</a> / My Dashboard</div>
+    <h1>Welcome back</h1>
+    <p>Your profile, saved places, and trips — all in one place.</p>
+  </div>
+</section>
+
+<section class="wrap" style="padding-top:56px;">
+  <div class="dash-layout">
+    <aside class="dash-side">
+      <div class="dash-avatar" id="dashAvatar">AN</div>
+      <h3 id="dashName">Anobea N.</h3>
+      <p>Member since 2026</p>
+      <nav class="dash-nav">
+        <a href="#" class="active">📊 Overview</a>
+        <a href="#">📍 Saved Places</a>
+        <a href="#">🧳 Past Trips</a>
+        <a href="#">🗓️ Upcoming Trips</a>
+        <a href="#">🍽️ Favorite Restaurants</a>
+        <a href="#">🏝️ Favorite Destinations</a>
+        <a href="#">⚙️ Settings</a>
+      </nav>
+    </aside>
+
+    <div>
+      <div class="dash-stats">
+        <div class="stat-card"><div class="n">3</div><div class="l">Upcoming Trips</div></div>
+        <div class="stat-card"><div class="n">7</div><div class="l">Past Trips</div></div>
+        <div class="stat-card"><div class="n">12</div><div class="l">Saved Places</div></div>
+        <div class="stat-card"><div class="n">5</div><div class="l">Reviews Written</div></div>
+      </div>
+
+      <div class="dash-section">
+        <h3>Upcoming Trips</h3>
+        <div class="trip-row"><div><div class="name">Cape Coast & Kakum Weekend</div><div class="date">14 – 16 Aug 2026</div></div><span class="trip-status upcoming">Upcoming</span></div>
+        <div class="trip-row"><div><div class="name">Wli Waterfalls Hike</div><div class="date">2 – 3 Sep 2026</div></div><span class="trip-status upcoming">Upcoming</span></div>
+      </div>
+
+      <div class="dash-section">
+        <h3>Past Trips</h3>
+        <div class="trip-row"><div><div class="name">Mole National Park Safari</div><div class="date">10 – 13 Jun 2026</div></div><span class="trip-status past">Completed</span></div>
+        <div class="trip-row"><div><div class="name">Accra City Break</div><div class="date">22 – 24 Apr 2026</div></div><span class="trip-status past">Completed</span></div>
+      </div>
+
+      <div class="dash-section">
+        <h3>Favorite Destinations</h3>
+        <div class="chip-row" style="gap:10px;">
+          <span class="filter-chip active" style="cursor:default;">Kakum National Park</span>
+          <span class="filter-chip active" style="cursor:default;">Wli Waterfalls</span>
+          <span class="filter-chip active" style="cursor:default;">Cape Coast Castle</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div style="height:60px"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const name = localStorage.getItem('roamroots_user_name');
+    if (name) {
+      document.getElementById('dashName').textContent = name;
+      document.getElementById('dashAvatar').textContent = initialsFromName(name);
+    }
+  });
+</script>
+<footer>
+  <div class="wrap footer-grid">
+    <div class="footer-brand">
+      <div class="brand">
+        <div class="brand-mark-badge"><img src="img/logo-icon.png" alt="RoamRoots TravNet" class="brand-mark-img"></div>
+        <div class="brand-text"><div class="name">RoamRoots TravNet</div></div>
+      </div>
+      <p>Discover, connect, and experience Ghana — one route at a time.</p>
+    </div>
+    <div>
+      <h5>Explore</h5>
+      <ul>
+        <li><a href="destinations.html">Destinations</a></li>
+        <li><a href="plan-trip.html">Plan My Trip</a></li>
+        <li><a href="accommodation.html">Accommodation</a></li>
+        <li><a href="transportation.html">Transportation</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Experience</h5>
+      <ul>
+        <li><a href="experiences.html">Local Experiences</a></li>
+        <li><a href="restaurants.html">Restaurants</a></li>
+        <li><a href="map.html">Interactive Map</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Company</h5>
+      <ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="dashboard.html">My Dashboard</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Emergency</h5>
+      <ul>
+        <li><a href="emergency.html">Police</a></li>
+        <li><a href="emergency.html">Hospitals</a></li>
+        <li><a href="emergency.html">Embassies</a></li>
+        <li><a href="emergency.html">Emergency Contacts</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="wrap footer-bottom">
+    <span>© 2026 RoamRoots TravNet. All rights reserved.</span>
+    <span>Accra, Ghana</span>
+  </div>
+</footer>
+
+</body>
+</html>
