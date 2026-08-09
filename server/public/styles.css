@@ -80,8 +80,9 @@
   .hero{
     position:relative;overflow:hidden;
     background:
-      linear-gradient(180deg, rgba(15,36,56,0.55), rgba(15,36,56,0.75)),
-      url('https://images.unsplash.com/photo-1591017683905-9b2c9b1d1f6a?q=80&w=1600&auto=format&fit=crop') center/cover;
+      linear-gradient(100deg, rgba(15,36,56,0.93) 0%, rgba(15,36,56,0.72) 42%, rgba(15,36,56,0.42) 100%),
+      linear-gradient(180deg, rgba(15,36,56,0.25), rgba(15,36,56,0.5)),
+      url('img/hero-ghana.jpg') 68% center/cover;
     min-height:560px;
     display:flex;align-items:center;
   }
@@ -273,6 +274,12 @@
   @media(max-width:980px){
     nav.main-links{display:none;}
     .hero h1{font-size:36px;}
+    .hero{
+      min-height:480px;
+      background:
+        linear-gradient(180deg, rgba(15,36,56,0.85), rgba(15,36,56,0.75)),
+        url('img/hero-ghana.jpg') 60% center/cover;
+    }
     .search-fields{grid-template-columns:1fr 1fr;}
     .dest-grid{grid-template-columns:repeat(2,1fr);}
     .plan-steps{grid-template-columns:repeat(2,1fr);}
