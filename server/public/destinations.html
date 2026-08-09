@@ -119,12 +119,12 @@
 
 <script>
   const destinations = [
-    {name:"Cape Coast Castle", region:"Central Region", rating:4.8, best:"Nov – Mar", budget:"₵80 – 150", img:"img/cape-coast-castle.jpg", desc:"A former slave-trading post turned UNESCO World Heritage site, with guided tours through its dungeons and dramatic Atlantic-facing ramparts."},
-    {name:"Mole National Park", region:"Savannah Region", rating:4.6, best:"Dec – Apr", budget:"₵200 – 450", img:"img/mole-national-park.jpg", desc:"Ghana's largest wildlife refuge — walking safaris bring you close to elephants, antelope, and over 300 recorded bird species."},
-    {name:"Wli Waterfalls", region:"Volta Region", rating:4.7, best:"Jun – Sep", budget:"₵50 – 120", img:"img/wli-waterfalls.jpg", desc:"West Africa's tallest waterfall, reached by a forest trail through the Agumatsa Wildlife Sanctuary — home to hundreds of fruit bats."},
-    {name:"Aburi Gardens", region:"Eastern Region", rating:4.5, best:"Year-round", budget:"₵30 – 80", img:"img/aburi-gardens.jpg", desc:"Century-old botanical gardens in the cool Akwapim hills, a short drive from Accra — ideal for a relaxed half-day trip."},
-    {name:"Nzulezu", region:"Western Region", rating:4.4, best:"Nov – Feb", budget:"₵100 – 200", img:"img/nzulezu.jpg", desc:"A stilt village built entirely over Lake Tadane, reachable only by canoe — one of Ghana's most distinctive cultural visits."},
-    {name:"Kakum National Park", region:"Central Region", rating:4.8, best:"Nov – Mar", budget:"₵90 – 180", img:"img/kakum-national-park.jpg", desc:"Famous for its canopy walkway suspended 30 metres above the rainforest floor, spanning seven rope bridges."},
+    {name:"Cape Coast Castle", region:"Central Region", rating:4.8, best:"Nov – Mar", budget:"₵80 – 150", img:"img/cape-coast-castle.jpg", desc:"A former slave-trading post turned UNESCO World Heritage site, with guided tours through its dungeons and dramatic Atlantic-facing ramparts.", phone:"+233 33 213 2529", email:"official@gmmb.gov.gh"},
+    {name:"Mole National Park", region:"Savannah Region", rating:4.6, best:"Dec – Apr", budget:"₵200 – 450", img:"img/mole-national-park.jpg", desc:"Ghana's largest wildlife refuge — walking safaris bring you close to elephants, antelope, and over 300 recorded bird species.", phone:"+233 24 435 8371", email:"info@fcghana.gov.gh"},
+    {name:"Wli Waterfalls", region:"Volta Region", rating:4.7, best:"Jun – Sep", budget:"₵50 – 120", img:"img/wli-waterfalls.jpg", desc:"West Africa's tallest waterfall, reached by a forest trail through the Agumatsa Wildlife Sanctuary — home to hundreds of fruit bats.", phone:"+233 53 373 7009", email:"info@visitwli.com.gh"},
+    {name:"Aburi Gardens", region:"Eastern Region", rating:4.5, best:"Year-round", budget:"₵30 – 80", img:"img/aburi-gardens.jpg", desc:"Century-old botanical gardens in the cool Akwapim hills, a short drive from Accra — ideal for a relaxed half-day trip.", phone:"+233 24 407 4040", email:"aburibotanicgardens@gmail.com"},
+    {name:"Nzulezu", region:"Western Region", rating:4.4, best:"Nov – Feb", budget:"₵100 – 200", img:"img/nzulezu.jpg", desc:"A stilt village built entirely over Lake Tadane, reachable only by canoe — one of Ghana's most distinctive cultural visits.", phone:"+233 24 460 6762", email:"nzulezostiltvillagetour@gmail.com"},
+    {name:"Kakum National Park", region:"Central Region", rating:4.8, best:"Nov – Mar", budget:"₵90 – 180", img:"img/kakum-national-park.jpg", desc:"Famous for its canopy walkway suspended 30 metres above the rainforest floor, spanning seven rope bridges.", phone:"+233 33 213 0265", email:"info@kakumnationalpark.info"},
   ];
 
   function render(list){
@@ -141,6 +141,8 @@
             <div><span class="label">Region</span> ${d.region}</div>
             <div><span class="label">Best Time</span> ${d.best}</div>
             <div><span class="label">Budget</span> <span class="budget">${d.budget}</span></div>
+            <div><span class="label">Contact</span> <a href="tel:${d.phone.replace(/\s/g,'')}" style="color:var(--ocean);text-decoration:none;">${d.phone}</a></div>
+            <div><span class="label">Email</span> <a href="mailto:${d.email}" style="color:var(--ocean);text-decoration:none;font-size:12px;">${d.email}</a></div>
           </div>
         </div>
       </div>
