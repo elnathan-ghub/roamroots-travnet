@@ -20,7 +20,7 @@ const SITE_TRANSPORT_LOCATIONS = [
 
 const SITE_ATTRACTIONS = [
   "Cape Coast Castle", "Mole National Park", "Wli Waterfalls",
-  "Aburi Gardens", "Nzulezu", "Kakum National Park",
+  "Aburi Gardens", "Nzulezu", "Kakum National Park", "Zimmaziwo Snake Village",
   "Independence Square", "Kwame Nkrumah Mausoleum", "Elmina Castle"
 ];
 
